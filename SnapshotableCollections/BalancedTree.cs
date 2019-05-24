@@ -13,12 +13,8 @@ namespace SnapshotableCollections
         private TreeNode? _root;
         private readonly StringComparison _comparer;
 
-        public BalancedTree(StringComparison? comparer = null)
-        {
-            _comparer = comparer ?? StringComparison.OrdinalIgnoreCase;
-        }
+        public BalancedTree(StringComparison? comparer = null) => _comparer = comparer ?? StringComparison.OrdinalIgnoreCase;
 
-        ///If inserting a key that already exists, we overwrite the previous key
         public void Insert(string key, T value)
         {
             if (_root == null)
@@ -42,29 +38,70 @@ namespace SnapshotableCollections
                 {
                     parent!.Right = current;
                 }
+
+                var height = 1;
+                current = current.Parent;
+                while (current != null && current.Height < height)
+                {
+                    current.Height = height;
+                    height += 1;
+                    current = current.Parent;
+                }
             }
             //TODO balance tree
         }
 
         public void Remove(string key)
         {
+            if (_root == null)
+                return;
             var (parent, node, found) = InternalFind(key);
             if (!found || node == null)
                 return;
-            if (parent == null)
+            var setBase = parent == null 
+                ? n => _root = n 
+                : parent.Left == node 
+                    ? (Action<TreeNode?>) (n => parent.Left = n) 
+                    : n => parent.Right = n;
+            switch (node.Left)
             {
-                _root = null;
+                case null when node.Right == null:
+                    setBase(null);
+                    return;
+                case null:
+                    setBase(node.Right);
+                    break;
+                default:
+                {
+                    if (node.Right == null)
+                        setBase(node.Left);
+                    else
+                    {
+                        if (node.Left.Height < node.Right.Height)
+                        {
+                            var walk = node.Right;
+                            while (walk.Left != null)
+                                walk = walk.Left;
+                            walk.Parent!.Left = walk.Right;
+                            walk.Left = node.Left;
+                            walk.Right = _root.Right;
+                            setBase(walk);
+                        }
+                        else
+                        {
+                            var walk = node.Left;
+                            while (walk.Right != null)
+                                walk = walk.Right;
+                            walk.Parent!.Right = walk.Left;
+                            walk.Right = node.Right;
+                            walk.Left = _root.Left;
+                            setBase(walk);
+                        }
+                    }
+
+                    break;
+                }
             }
-            else if (parent.Left == node)
-                parent.Left = null;
-            else if (parent.Right == node)
-                parent.Right = null;
-            if(node.Left != null)
-                foreach (var n in Walk(node.Left))
-                    Insert(n.Key, n.Value);
-            if (node.Right != null)
-                foreach (var n in Walk(node.Right))
-                    Insert(n.Key, n.Value);
         }
         public T Get(string key)
         {
@@ -114,14 +151,18 @@ namespace SnapshotableCollections
 
         private IEnumerable<TreeNode> Walk(TreeNode node)
         {
-            if (node.Left != null)
-                foreach (var n in Walk(node.Left))
-                    yield return n;
-            yield return node;
-            if (node.Right != null)
-                foreach (var n in Walk(node.Right))
-                    yield return n;
+            while (true)
+            {
+                if (node.Left != null)
+                    foreach (var n in Walk(node.Left))
+                        yield return n;
+                yield return node;
+                if (node.Right == null)
+                    yield break;
+                node = node.Right;
+            }
         }
+
         ///Finds the closest match, if the key exists, returns the Keynode, if not returns the parent that is closest to the key
         private (TreeNode? parent, TreeNode? current, bool found) InternalFind(string key)
         {
@@ -151,16 +192,18 @@ namespace SnapshotableCollections
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (_root != null)
-                foreach (var node in Walk(_root))
-                    yield return node;
+            if (_root == null)
+                yield break;
+            foreach (var node in Walk(_root))
+                yield return node;
         }
 
         IEnumerator<KeyValuePair<string, T>> IEnumerable<KeyValuePair<string, T>>.GetEnumerator()
         {
-            if (_root != null)
-                foreach (var node in Walk(_root))
-                    yield return new KeyValuePair<string, T>(node.Key, node.Value);
+            if (_root == null)
+                yield break;
+            foreach (var node in Walk(_root))
+                yield return new KeyValuePair<string, T>(node.Key, node.Value);
         }
         private class TreeNode
         {
@@ -169,7 +212,7 @@ namespace SnapshotableCollections
             public TreeNode? Left { get; set; }
             public TreeNode? Right { get; set; }
             public TreeNode? Parent { get; set; }
-            public int Height { get; set; } = 0;
+            public int Height { get; set; }
             public TreeNode(string key, T value)
             {
                 Key = key;

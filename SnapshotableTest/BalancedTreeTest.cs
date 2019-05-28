@@ -17,7 +17,7 @@ namespace SnapshotableTest
         [Fact]
         public void Insert1Item()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
         }
@@ -25,7 +25,7 @@ namespace SnapshotableTest
         [Fact]
         public void Insert2Items()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("2", 2);
@@ -35,7 +35,7 @@ namespace SnapshotableTest
         [Fact]
         public void Insert3Items()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("2", 2);
@@ -47,7 +47,7 @@ namespace SnapshotableTest
         [Fact]
         public void Insert3ItemsMixedOrder()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("2", 2);
             _output.WriteLine(t.Tree());
             t.Insert("3", 3);
@@ -67,7 +67,7 @@ namespace SnapshotableTest
         [Fact]
         public void Get()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             var actual = t.Get("1");
@@ -78,7 +78,7 @@ namespace SnapshotableTest
         [Fact]
         public void GetReplaced()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("1", 2);
@@ -91,7 +91,7 @@ namespace SnapshotableTest
         [Fact]
         public void Get2Items()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("2", 2);
@@ -107,7 +107,7 @@ namespace SnapshotableTest
         [Fact]
         public void Get3Items()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("2", 2);
@@ -128,7 +128,7 @@ namespace SnapshotableTest
         [Fact]
         public void GetWithDefault()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             _output.WriteLine(t.Tree());
             var actual = t.Get("1", 2);
             const int expected = 2;
@@ -139,7 +139,7 @@ namespace SnapshotableTest
         [Fact]
         public void GetWithTry()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             var actual = t.TryGet("1", out var result);
@@ -152,7 +152,7 @@ namespace SnapshotableTest
         [Fact]
         public void GetNotExistsWithTry()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             _output.WriteLine(t.Tree());
             var actual = t.TryGet("1", out _);
             const bool expected = false;
@@ -162,7 +162,7 @@ namespace SnapshotableTest
         [Fact]
         public void Keys1Item()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             var actual = t.Keys();
@@ -173,7 +173,7 @@ namespace SnapshotableTest
         [Fact]
         public void Keys1ItemAndReplace()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("1", 2);
@@ -186,7 +186,7 @@ namespace SnapshotableTest
         [Fact]
         public void Keys2Items()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("2", 2);
@@ -198,7 +198,7 @@ namespace SnapshotableTest
         [Fact]
         public void Keys3Items()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             _output.WriteLine(t.Tree());
             t.Insert("2", 2);
@@ -217,7 +217,7 @@ namespace SnapshotableTest
         [Fact]
         public void Keys3ItemsUnsorted()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("2", 2);
             _output.WriteLine(t.Tree());
             t.Insert("3", 3);
@@ -235,7 +235,7 @@ namespace SnapshotableTest
         [Fact]
         public void Remove()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("2", 2);
             _output.WriteLine(t.Tree());
             t.Remove("2");
@@ -246,7 +246,7 @@ namespace SnapshotableTest
         [Fact]
         public void RemoveInMiddleOfTree()
         {
-            var t = new BalancedTree<int>();
+            var t = new BalancedTreeTestWrapper<int>();
             t.Insert("1", 1);
             t.Insert("2", 2);
             t.Insert("3", 3);

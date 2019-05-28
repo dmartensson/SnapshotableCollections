@@ -10,8 +10,8 @@ namespace SnapshotableCollections
     
     public class BalancedTree<T> : IEnumerable<KeyValuePair<string, T>> where T: struct
     {
-        private TreeNode? _root;
-        private readonly StringComparison _comparer;
+        protected TreeNode? _root;
+        protected readonly StringComparison _comparer;
 
         public BalancedTree(StringComparison? comparer = null) => _comparer = comparer ?? StringComparison.OrdinalIgnoreCase;
 
@@ -49,6 +49,17 @@ namespace SnapshotableCollections
                 }
             }
             //TODO balance tree
+            //if (_root?.Left != null && _root?.Right != null)
+            //{
+            //    var diff = _root.Left.Height - _root.Left.Height;
+            //    if (diff >= 2)
+            //    {
+
+            //    } else if (diff <= 2)
+            //    {
+
+            //    }
+            //}
         }
 
         public void Remove(string key)
@@ -137,18 +148,6 @@ namespace SnapshotableCollections
                 : Walk(_root).Select(n => n.Value).ToList();
         }
 
-        public string Tree()
-        {
-            return InternalTree(_root);
-        }
-
-        private string InternalTree(TreeNode? node)
-        {
-            return node == null 
-                ? "-" 
-                : $"{node.Key}:{node.Value}(Left: {InternalTree(node.Left)}, Right: {InternalTree(node.Right)})";
-        }
-
         private IEnumerable<TreeNode> Walk(TreeNode node)
         {
             while (true)
@@ -205,14 +204,14 @@ namespace SnapshotableCollections
             foreach (var node in Walk(_root))
                 yield return new KeyValuePair<string, T>(node.Key, node.Value);
         }
-        private class TreeNode
+        protected class TreeNode
         {
             public string Key { get; }
             public T Value { get; set; }
             public TreeNode? Left { get; set; }
             public TreeNode? Right { get; set; }
             public TreeNode? Parent { get; set; }
-            public int Height { get; set; }
+            public int Height { get; set; }// = -1; Check if we should use -1 for empty node
             public TreeNode(string key, T value)
             {
                 Key = key;
